@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="192" height="192" viewBox="0 0 192 192" role="img" aria-label="Curs Admin">
+  <rect width="192" height="192" rx="36" fill="#157a8a"/>
+  <rect x="24" y="36" width="144" height="120" rx="14" fill="#ffffff"/>
+  <path d="M48 70h96M48 96h72M48 122h52" stroke="#157a8a" stroke-width="10" stroke-linecap="round"/>
+</svg>
