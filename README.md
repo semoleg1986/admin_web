@@ -1,56 +1,56 @@
-# admin_app (Nuxt 3)
+# admin_app
 
-Минимальный frontend на Vue + Nitro.
+Admin operations console built on Nuxt 3.
 
-## Архитектурный паттерн
+## Responsibility
 
-- `src/app`: глобальная инициализация/стили.
-- `src/pages`: route-страницы.
-- `src/features`: бизнес-фичи (`model/api/ui`).
-- `src/shared`: UI, lib, api, types.
-- `src/server`: Nitro handlers.
+`admin_app` owns:
+- admin-facing operational UI
+- payment intent review and approval UX
+- user and catalog administration surfaces
+- server-side backend proxies under `/api`
 
-Подробно: `docs/ARCHITECTURE.md`.
+## Local run
 
-## UI Preferences
-
-- Переключатель языка и темы находится на странице `/settings`.
-- Footer содержит ссылку на настройки.
-- Год в footer подставляется динамически.
-
-## PWA и SEO
-
-- `manifest.webmanifest` и PWA-иконки: `public/manifest.webmanifest`, `public/icons/*`.
-- SEO/PWA meta подключены глобально в `src/app.vue`.
-- `robots.txt` отдается как `Disallow: /` (приложение закрыто от индексации).
-- Meta robots/googlebot: `noindex, nofollow, noarchive, nosnippet`.
-
-## Локальный запуск
 ```bash
 npm install
 npm run dev
 ```
 
-Откроется на `http://localhost:3001`.
+App URL:
+- [http://localhost:3001](http://localhost:3001)
 
-## Тесты
+## Environment
+
+- [admin_app/.env.example](/Users/olegsemenov/Programming/curs/admin_app/.env.example)
+- [admin_app/.env.local.example](/Users/olegsemenov/Programming/curs/admin_app/.env.local.example)
+
+Key variables:
+- `NUXT_AUTH_SERVICE_BASE_URL`
+- `NUXT_PUBLIC_API_BASE_URL`
+- `NUXT_PUBLIC_SITE_URL`
+
+## UI notes
+
+- left sidebar shell with collapse-to-icons behavior on desktop/tablet
+- mobile drawer navigation
+- settings panel inside sidebar with theme, language, backend status, and logout
+
+## Tests and quality
+
 ```bash
 npm test
-```
-
-## Lint и Format
-```bash
 npm run lint
 npm run format:check
 ```
 
-Автоисправление:
+## Build
+
 ```bash
-npm run lint:fix
-npm run format
+npm run build
+npm run start
 ```
 
-## Docker
-```bash
-docker compose -f docker-compose.yml up -d --build
-```
+## Documentation
+
+- [docs/ARCHITECTURE.md](/Users/olegsemenov/Programming/curs/admin_app/docs/ARCHITECTURE.md)
