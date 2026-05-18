@@ -1,7 +1,12 @@
-import { getRequestHeader, setCookie } from "h3";
+import { getRequestHeader } from "h3";
 import type { H3Event } from "h3";
 
-import { clearAuthCookies, getAccessToken, getRefreshToken } from "~/server/utils/auth-session";
+import {
+  clearAuthCookies,
+  getAccessToken,
+  getRefreshToken,
+  setAuthCookies
+} from "~/server/utils/auth-session";
 
 interface AuthTokenPairResponse {
   access_token: string;
@@ -16,20 +21,6 @@ function authServiceBaseUrl() {
   return String(
     runtimeConfig.authServiceBaseUrl || runtimeConfig.public.apiBaseUrl || "http://localhost:8000"
   ).replace(/\/$/, "");
-}
-
-function isSecureCookie() {
-  return process.env.NODE_ENV === "production";
-}
-
-function setAccessCookie(event: H3Event, accessToken: string, expiresIn: number) {
-  setCookie(event, "curs_access_token", accessToken, {
-    httpOnly: true,
-    maxAge: expiresIn,
-    path: "/",
-    sameSite: "lax",
-    secure: isSecureCookie()
-  });
 }
 
 function forwardTracingHeaders(event: H3Event, headers: Headers) {
@@ -67,7 +58,11 @@ async function exchangeRefreshToken(event: H3Event) {
   }
 
   const tokenPair = (await response.json()) as AuthTokenPairResponse;
-  setAccessCookie(event, tokenPair.access_token, tokenPair.expires_in);
+  setAuthCookies(event, {
+    accessToken: tokenPair.access_token,
+    expiresIn: tokenPair.expires_in,
+    refreshToken: tokenPair.refresh_token
+  });
   return tokenPair.access_token;
 }
 

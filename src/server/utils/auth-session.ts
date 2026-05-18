@@ -2,8 +2,8 @@ import { Buffer } from "node:buffer";
 import { deleteCookie, getCookie, setCookie } from "h3";
 import type { H3Event } from "h3";
 
-const ACCESS_TOKEN_COOKIE = "curs_access_token";
-const REFRESH_TOKEN_COOKIE = "curs_refresh_token";
+const ACCESS_TOKEN_COOKIE = "curs_admin_access_token";
+const REFRESH_TOKEN_COOKIE = "curs_admin_refresh_token";
 
 function isSecureCookie() {
   return process.env.NODE_ENV === "production";
