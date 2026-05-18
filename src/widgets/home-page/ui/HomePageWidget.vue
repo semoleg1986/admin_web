@@ -11,8 +11,8 @@
 
       <article class="admin-card admin-card--metric" style="grid-column: span 4">
         <span class="admin-card__eyebrow">{{ t("dashboard.metric.access") }}</span>
-        <strong>{{ status === "ok" ? "24" : "0" }}</strong>
-        <p>{{ t("page.status") }}: {{ t(`status.${status}`) }}</p>
+        <strong>&mdash;</strong>
+        <p>{{ t("empty.homeAccess") }}</p>
       </article>
 
       <article class="admin-card admin-card--metric" style="grid-column: span 4">

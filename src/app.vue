@@ -1,5 +1,13 @@
 <template>
+  <AdminLoginPanel
+    v-if="authReady && (!isAuthenticated || !isAdmin)"
+    ref="loginPanelRef"
+    :pending="authPending"
+    @submit="handleLogin"
+  />
+
   <div
+    v-else-if="authReady"
     class="admin-shell"
     :class="{
       'admin-shell--collapsed': sidebarCollapsed && !isMobile,
@@ -8,11 +16,38 @@
   >
     <aside class="admin-sidebar">
       <div class="admin-sidebar__brand">
-        <div class="admin-sidebar__logo">C</div>
-        <div v-if="!sidebarCollapsed || isMobile" class="admin-sidebar__brand-copy">
-          <strong>{{ runtimeConfig.public.appName }}</strong>
-          <span>{{ t("shell.subtitle") }}</span>
+        <div class="admin-sidebar__brand-main">
+          <div class="admin-sidebar__logo">C</div>
+          <div v-if="!sidebarCollapsed || isMobile" class="admin-sidebar__brand-copy">
+            <strong>{{ runtimeConfig.public.appName }}</strong>
+            <span>{{ t("shell.subtitle") }}</span>
+          </div>
         </div>
+
+        <button
+          v-if="!isMobile"
+          type="button"
+          class="admin-sidebar__collapse admin-sidebar__collapse--top"
+          :aria-label="sidebarCollapsed ? t('shell.expand') : t('shell.collapse')"
+          @click="toggleSidebar"
+        >
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path :d="sidebarCollapsed ? 'M9 6l6 6-6 6' : 'M15 6l-6 6 6 6'" />
+          </svg>
+        </button>
+      </div>
+
+      <div v-if="isMobile" class="admin-sidebar__mobile-head">
+        <button
+          type="button"
+          class="admin-sidebar__collapse admin-sidebar__collapse--top"
+          :aria-label="t('shell.collapse')"
+          @click="closeMobileSidebar"
+        >
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M15 6l-6 6 6 6" />
+          </svg>
+        </button>
       </div>
 
       <nav class="admin-sidebar__nav" aria-label="Admin navigation">
@@ -21,6 +56,7 @@
           :key="item.to"
           :to="item.to"
           class="admin-nav-link"
+          :class="{ 'admin-nav-link--icon-only': sidebarCollapsed && !isMobile }"
           :title="t(item.labelKey)"
           @click="closeMobileSidebar"
         >
@@ -35,6 +71,7 @@
         <button
           type="button"
           class="admin-sidebar__settings-trigger"
+          :class="{ 'admin-nav-link--icon-only': sidebarCollapsed && !isMobile }"
           :title="t('nav.settings')"
           :aria-expanded="settingsOpen"
           @click="toggleSettings"
@@ -55,20 +92,6 @@
             @logout="handleLogout"
           />
         </div>
-
-        <button
-          type="button"
-          class="admin-sidebar__collapse"
-          :aria-label="sidebarCollapsed ? t('shell.expand') : t('shell.collapse')"
-          @click="toggleSidebar"
-        >
-          <svg viewBox="0 0 24 24" aria-hidden="true">
-            <path :d="sidebarCollapsed ? 'M9 6l6 6-6 6' : 'M15 6l-6 6 6 6'" />
-          </svg>
-          <span v-if="!sidebarCollapsed || isMobile">
-            {{ sidebarCollapsed ? t("shell.expand") : t("shell.collapse") }}
-          </span>
-        </button>
       </div>
     </aside>
 
@@ -96,21 +119,29 @@
       </main>
     </div>
   </div>
+
+  <div v-else class="admin-login admin-login--pending">
+    <div class="admin-login__card">
+      <p>{{ t("auth.pending") }}</p>
+    </div>
+  </div>
 </template>
 
 <script setup lang="ts">
 import { computed, onBeforeUnmount, onMounted, ref, watch, watchEffect } from "vue";
 import { useRouter } from "#imports";
 import AdminSidebarSettingsPanel from "~/app/ui/AdminSidebarSettingsPanel.vue";
+import { AdminLoginPanel, useAuthSession } from "~/features/auth";
 import { useHealthQuery } from "~/shared/api/health";
-import { useAuthSession } from "~/features/auth";
 import { usePreferences } from "~/shared/lib/preferences/use-preferences";
 
 const route = useRoute();
 const router = useRouter();
 const runtimeConfig = useRuntimeConfig();
 const { init, locale, setLocale, t } = usePreferences();
-const { bootstrap, logout } = useAuthSession();
+const { bootstrap, initialized, isAuthenticated, login, logout, pending: authPending, user } =
+  useAuthSession();
+const loginPanelRef = ref<InstanceType<typeof AdminLoginPanel> | null>(null);
 const sidebarCollapsed = ref(false);
 const mobileSidebarOpen = ref(false);
 const isMobile = ref(false);
@@ -145,6 +176,10 @@ const {
   refresh: refreshHealth
 } = useHealthQuery();
 
+await bootstrap().catch(() => null);
+
+const authReady = computed(() => initialized.value);
+const isAdmin = computed(() => Boolean(user.value?.roles.includes("admin")));
 const siteUrl = computed(() => String(runtimeConfig.public.siteUrl || "http://localhost:3001"));
 const routePath = computed(() =>
   route.path !== "/" && route.path.endsWith("/") ? route.path.slice(0, -1) : route.path
@@ -193,13 +228,24 @@ function toggleSettings() {
 }
 
 function toggleSidebar() {
-  if (isMobile.value) {
-    mobileSidebarOpen.value = !mobileSidebarOpen.value;
-    return;
-  }
-
   sidebarCollapsed.value = !sidebarCollapsed.value;
   window.localStorage.setItem(sidebarStorageKey, String(sidebarCollapsed.value));
+}
+
+async function handleLogin(payload: { email: string; password: string }) {
+  try {
+    const session = await login(payload);
+    if (!session.user.roles.includes("admin")) {
+      loginPanelRef.value?.setNotAdmin();
+      await logout();
+      return;
+    }
+
+    settingsOpen.value = false;
+    mobileSidebarOpen.value = false;
+  } catch (error) {
+    loginPanelRef.value?.setError(error);
+  }
 }
 
 async function handleLogout() {
@@ -247,7 +293,6 @@ useSeoMeta({
 
 onMounted(() => {
   init();
-  void bootstrap();
   sidebarCollapsed.value = window.localStorage.getItem(sidebarStorageKey) === "true";
   syncViewportState();
   window.addEventListener("resize", syncViewportState);
@@ -291,10 +336,19 @@ onBeforeUnmount(() => {
   z-index: 3;
 }
 
-.admin-sidebar__brand {
+.admin-sidebar__brand,
+.admin-sidebar__mobile-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.875rem;
+}
+
+.admin-sidebar__brand-main {
   display: flex;
   align-items: center;
   gap: 0.875rem;
+  min-width: 0;
 }
 
 .admin-sidebar__logo {
@@ -368,10 +422,15 @@ onBeforeUnmount(() => {
   box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--c-accent), white 60%);
 }
 
+.admin-nav-link--icon-only,
+.admin-sidebar__settings-trigger.admin-nav-link--icon-only {
+  justify-content: center;
+  padding-inline: 0.75rem;
+}
+
 .admin-nav-link__icon,
 .admin-sidebar__collapse svg,
-.admin-topbar__menu svg,
-.admin-topbar__collapse svg {
+.admin-shell__mobile-toggle svg {
   width: 1.2rem;
   height: 1.2rem;
   stroke: currentColor;
@@ -392,6 +451,14 @@ onBeforeUnmount(() => {
   cursor: pointer;
 }
 
+.admin-sidebar__collapse {
+  display: inline-grid;
+  place-items: center;
+  width: 3rem;
+  height: 3rem;
+  padding: 0;
+}
+
 .admin-sidebar__settings-trigger {
   display: flex;
   align-items: center;
@@ -404,17 +471,8 @@ onBeforeUnmount(() => {
 .admin-sidebar__settings-panel {
   position: absolute;
   left: calc(100% + 0.9rem);
-  bottom: 3.8rem;
+  bottom: 0;
   width: min(24rem, 52vw);
-}
-
-.admin-sidebar__collapse {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.7rem;
-  min-height: 3rem;
-  padding: 0.8rem 0.9rem;
 }
 
 .admin-shell__workspace {
@@ -445,6 +503,13 @@ onBeforeUnmount(() => {
 
 .admin-shell__backdrop {
   display: none;
+}
+
+.admin-login--pending {
+  display: grid;
+  place-items: center;
+  min-height: 100dvh;
+  padding: 2rem;
 }
 
 @media (max-width: 767px) {
