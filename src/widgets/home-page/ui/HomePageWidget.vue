@@ -69,10 +69,22 @@
 
 <script setup lang="ts">
 import { CourseCatalogSection } from "~/features/course-catalog";
+import { usePreferences } from "~/shared/lib/preferences/use-preferences";
+import { buildCourseTitle } from "~/shared/lib/seo/build-course-title";
 import HeroBanner from "~/shared/ui/hero-banner/HeroBanner.vue";
 import { useHomePage } from "~/widgets/home-page/model/use-home-page";
 
-const { courses, status, t } = await useHomePage();
+const { t } = usePreferences();
+const title = computed(() => buildCourseTitle(t("page.hero.title")));
+
+useSeoMeta({
+  title,
+  description: "Админ-панель для управления учебной платформой.",
+  ogTitle: title,
+  ogDescription: "Панель администратора образовательной платформы."
+});
+
+const { courses, status } = await useHomePage();
 </script>
 
 <style scoped>
