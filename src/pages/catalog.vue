@@ -1,21 +1,7 @@
 <template>
-  <main class="admin-page">
-    <section class="admin-page__header">
-      <div>
-        <h1>{{ t("catalogAdmin.title") }}</h1>
-        <p>{{ t("catalogAdmin.subtitle") }}</p>
-      </div>
-    </section>
-
-    <section class="admin-section">
-      <h2>{{ t("empty.title") }}</h2>
-      <p>{{ t("empty.catalog") }}</p>
-    </section>
-  </main>
+  <CatalogPageWidget />
 </template>
 
 <script setup lang="ts">
-import { usePreferences } from "~/shared/lib/preferences/use-preferences";
-
-const { t } = usePreferences();
+import { CatalogPageWidget } from "~/widgets/catalog-page";
 </script>
