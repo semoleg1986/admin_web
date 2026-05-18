@@ -6,6 +6,7 @@
   --c-border: #d9e5e8;
   --c-footer-bg: #f7fbfc;
   --c-accent: #157a8a;
+  --c-danger: #b54747;
 }
 
 [data-theme="dark"] {
@@ -30,5 +31,164 @@ body,
 body {
   background: radial-gradient(circle at top right, #daf1ef 0%, var(--c-bg) 45%);
   color: var(--c-fg);
-  transition: background 180ms ease, color 180ms ease;
+  transition:
+    background 180ms ease,
+    color 180ms ease;
+  font-family: "IBM Plex Sans", "Segoe UI", sans-serif;
+}
+
+a,
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+.admin-page {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  min-width: 0;
+}
+
+.admin-page__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.admin-page__header h1,
+.admin-page__header h2,
+.admin-section h2,
+.admin-card h3 {
+  margin: 0;
+}
+
+.admin-page__header p,
+.admin-card p,
+.admin-section p {
+  margin: 0;
+  color: var(--c-muted);
+}
+
+.admin-grid {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+}
+
+.admin-grid > * {
+  min-width: 0;
+}
+
+.admin-card,
+.admin-section {
+  border: 1px solid var(--c-border);
+  border-radius: 1.25rem;
+  background: color-mix(in oklab, var(--c-surface), white 10%);
+  padding: 1.1rem 1.15rem;
+  box-shadow: 0 12px 30px rgba(16, 28, 34, 0.05);
+}
+
+.admin-card--metric {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.admin-card--metric strong {
+  font-size: clamp(1.6rem, 1.2rem + 1.2vw, 2.3rem);
+  line-height: 1;
+}
+
+.admin-card__eyebrow {
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--c-muted);
+}
+
+.admin-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+.admin-list li {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  padding-bottom: 0.8rem;
+  border-bottom: 1px solid color-mix(in oklab, var(--c-border), transparent 20%);
+}
+
+.admin-list li:last-child {
+  padding-bottom: 0;
+  border-bottom: 0;
+}
+
+.admin-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  border-radius: 999px;
+  border: 1px solid var(--c-border);
+  padding: 0.3rem 0.6rem;
+  font-size: 0.78rem;
+  white-space: nowrap;
+}
+
+.admin-badge--accent {
+  border-color: color-mix(in oklab, var(--c-accent), white 60%);
+  color: color-mix(in oklab, var(--c-accent), black 15%);
+  background: color-mix(in oklab, var(--c-accent), white 92%);
+}
+
+.admin-badge--danger {
+  border-color: color-mix(in oklab, var(--c-danger), white 60%);
+  color: var(--c-danger);
+  background: color-mix(in oklab, var(--c-danger), white 92%);
+}
+
+.admin-action-row {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.admin-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 2.75rem;
+  padding: 0.7rem 1rem;
+  border-radius: 0.95rem;
+  border: 1px solid var(--c-border);
+  background: var(--c-surface);
+  color: var(--c-fg);
+  text-decoration: none;
+}
+
+.admin-action--primary {
+  border-color: color-mix(in oklab, var(--c-accent), white 60%);
+  background: color-mix(in oklab, var(--c-accent), white 86%);
+}
+
+@media (max-width: 767px) {
+  .admin-card,
+  .admin-section {
+    border-radius: 1rem;
+    padding: 1rem;
+  }
 }

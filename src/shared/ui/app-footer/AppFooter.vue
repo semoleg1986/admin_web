@@ -18,15 +18,13 @@ const { t } = usePreferences();
 
 <style scoped>
 .footer {
-  margin-top: 2.5rem;
+  margin-top: 1rem;
   border-top: 1px solid var(--c-border);
   background: var(--c-footer-bg);
 }
 
 .footer__main {
-  max-width: 1080px;
-  margin: 0 auto;
-  padding: 1.2rem 1rem 1.6rem;
+  padding: 1.2rem 1.25rem 1.6rem;
   display: flex;
   gap: 1rem;
   justify-content: space-between;
