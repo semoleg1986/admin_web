@@ -118,7 +118,11 @@ defineExpose({
   border-radius: 1.1rem;
   display: grid;
   place-items: center;
-  background: linear-gradient(135deg, color-mix(in oklab, var(--c-accent), black 8%) 0%, #d9a066 100%);
+  background: linear-gradient(
+    135deg,
+    color-mix(in oklab, var(--c-accent), black 8%) 0%,
+    #d9a066 100%
+  );
   color: white;
   font-size: 1.4rem;
   font-weight: 800;

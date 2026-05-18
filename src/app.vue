@@ -139,8 +139,15 @@ const route = useRoute();
 const router = useRouter();
 const runtimeConfig = useRuntimeConfig();
 const { init, locale, setLocale, t } = usePreferences();
-const { bootstrap, initialized, isAuthenticated, login, logout, pending: authPending, user } =
-  useAuthSession();
+const {
+  bootstrap,
+  initialized,
+  isAuthenticated,
+  login,
+  logout,
+  pending: authPending,
+  user
+} = useAuthSession();
 const loginPanelRef = ref<InstanceType<typeof AdminLoginPanel> | null>(null);
 const sidebarCollapsed = ref(false);
 const mobileSidebarOpen = ref(false);

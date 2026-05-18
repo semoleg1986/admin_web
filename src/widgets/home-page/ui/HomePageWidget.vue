@@ -84,7 +84,7 @@ useSeoMeta({
   ogDescription: "Панель администратора образовательной платформы."
 });
 
-const { courses, status } = useHomePage();
+const { courses } = useHomePage();
 </script>
 
 <style scoped>

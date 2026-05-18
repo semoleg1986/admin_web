@@ -5,6 +5,7 @@ Admin operations console built on Nuxt 3.
 ## Responsibility
 
 `admin_app` owns:
+
 - admin-facing operational UI
 - payment intent review and approval UX
 - user and catalog administration surfaces
@@ -18,6 +19,7 @@ npm run dev
 ```
 
 App URL:
+
 - [http://localhost:3001](http://localhost:3001)
 
 ## Environment
@@ -26,6 +28,7 @@ App URL:
 - [admin_app/.env.local.example](/Users/olegsemenov/Programming/curs/admin_app/.env.local.example)
 
 Key variables:
+
 - `NUXT_AUTH_SERVICE_BASE_URL`
 - `NUXT_PUBLIC_API_BASE_URL`
 - `NUXT_PUBLIC_SITE_URL`

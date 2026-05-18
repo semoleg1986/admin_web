@@ -4,10 +4,7 @@ import type { FetchError } from "ofetch";
 import type { ApiProblemDetails } from "~/shared/api/types";
 import { normalizeApiError, resolveApiUrl } from "~/shared/api/http";
 
-export function useApiQuery<TResponse>(
-  path: string,
-  options: UseFetchOptions<TResponse> = {}
-) {
+export function useApiQuery<TResponse>(path: string, options: UseFetchOptions<TResponse> = {}) {
   const runtimeConfig = useRuntimeConfig();
   const url = resolveApiUrl(path, runtimeConfig.public.apiBaseUrl);
   const method = String(options.method ?? "GET").toUpperCase();
@@ -17,9 +14,7 @@ export function useApiQuery<TResponse>(
   return {
     ...request,
     apiError: computed(() =>
-      normalizeApiError(
-        request.error.value as FetchError<ApiProblemDetails> | null | undefined
-      )
+      normalizeApiError(request.error.value as FetchError<ApiProblemDetails> | null | undefined)
     )
   };
 }

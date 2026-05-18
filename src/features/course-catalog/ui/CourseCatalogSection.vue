@@ -4,7 +4,9 @@
     <ul v-if="courses.length > 0" class="grid">
       <li v-for="course in courses" :key="course.id" class="card">
         <h3>{{ course.title }}</h3>
-        <p>{{ t("catalog.level") }}: {{ t(`catalog.level.${normalizeCourseLevel(course.level)}`) }}</p>
+        <p>
+          {{ t("catalog.level") }}: {{ t(`catalog.level.${normalizeCourseLevel(course.level)}`) }}
+        </p>
         <p>{{ t("catalog.lessons") }}: {{ course.lessonsCount }}</p>
       </li>
     </ul>

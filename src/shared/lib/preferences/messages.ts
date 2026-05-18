@@ -115,7 +115,8 @@ export const MESSAGES: Record<LocaleCode, Record<string, string>> = {
     "empty.payments": "The payment intent queue will appear after the admin payments API is wired.",
     "empty.users": "The users list will appear after the admin users API is wired.",
     "empty.catalog": "The operational catalog will appear after the admin catalog API is wired.",
-    "empty.homeAccess": "The access-grant metric will appear after the admin payments API is wired.",
+    "empty.homeAccess":
+      "The access-grant metric will appear after the admin payments API is wired.",
     "page.hero.title": "Administration console for the learning platform",
     "page.hero.subtitle": "Manage access, payments, content and analytics.",
     "dashboard.queue": "Approval queue",
