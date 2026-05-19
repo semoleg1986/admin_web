@@ -6,10 +6,6 @@ const HEARTBEAT_INTERVAL_MS = 15000;
 export default defineEventHandler(async (event) => {
   const query = getQuery(event);
   const status = typeof query.status === "string" && query.status ? query.status : "pending";
-  const selectedPaymentIntentId =
-    typeof query.selected_payment_intent_id === "string" && query.selected_payment_intent_id
-      ? query.selected_payment_intent_id
-      : "";
 
   const eventStream = createEventStream(event);
   let disposed = false;
@@ -20,12 +16,7 @@ export default defineEventHandler(async (event) => {
       event,
       `/api/admin/payments/intents?status=${encodeURIComponent(status)}&limit=50&offset=0`
     );
-
-    const selectedPaymentIntent = selectedPaymentIntentId
-      ? await fetchWithEvent(event, `/api/admin/payments/intents/${selectedPaymentIntentId}`)
-      : null;
-
-    return JSON.stringify({ items: list, selected_payment_intent: selectedPaymentIntent });
+    return JSON.stringify(list);
   };
 
   const tick = async () => {

@@ -64,13 +64,7 @@ export function usePaymentsPage() {
     { immediate: true }
   );
 
-  const streamUrl = computed(() => {
-    const params = new URLSearchParams({ status: "pending" });
-    if (selectedPaymentIntentId.value) {
-      params.set("selected_payment_intent_id", selectedPaymentIntentId.value);
-    }
-    return `/api/admin/payments/stream?${params.toString()}`;
-  });
+  const streamUrl = computed(() => "/api/admin/payments/stream?status=pending");
 
   useSseChannel(streamUrl, {
     onMessage: async () => {
