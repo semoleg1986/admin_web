@@ -1,4 +1,5 @@
 import { useAdminPaymentIntentsQuery, useAdminPaymentsClient } from "~/features/admin-payments";
+import { useSseChannel } from "~/shared/lib/realtime/use-sse-channel";
 import type { CourseAccessGrantItem } from "~/features/admin-payments";
 import { ApiRequestError } from "~/shared/api/types";
 import { usePreferences } from "~/shared/lib/preferences/use-preferences";
@@ -51,6 +52,32 @@ export function usePaymentsPage() {
     },
     { immediate: true }
   );
+
+  const streamUrl = computed(() => {
+    const params = new URLSearchParams({ status: "pending" });
+    if (selectedPaymentIntentId.value) {
+      params.set("selected_payment_intent_id", selectedPaymentIntentId.value);
+    }
+    return `/api/admin/payments/stream?${params.toString()}`;
+  });
+
+  useSseChannel(streamUrl, {
+    onMessage: async () => {
+      if (approvePending.value || detailsPending.value) {
+        return;
+      }
+      await refresh();
+      if (selectedPaymentIntentId.value) {
+        try {
+          selectedPaymentIntent.value = await paymentsClient.getPaymentIntent(
+            selectedPaymentIntentId.value
+          );
+        } catch {
+          selectedPaymentIntent.value = null;
+        }
+      }
+    }
+  });
 
   async function approveSelected() {
     if (!selectedPaymentIntentId.value) {
