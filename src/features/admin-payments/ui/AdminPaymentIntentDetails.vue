@@ -5,31 +5,58 @@
         <h2>{{ t("payments.details.title") }}</h2>
         <p v-if="item">{{ item.payment_intent_id }}</p>
       </div>
-      <button
-        v-if="item && item.status === 'pending'"
-        class="payment-details__approve"
-        type="button"
-        :disabled="approvePending"
-        @click="$emit('approve')"
-      >
-        {{ approvePending ? t("payments.actions.approving") : t("payments.actions.approve") }}
-      </button>
-      <button
-        v-if="item && item.status === 'pending'"
-        class="payment-details__reject"
-        type="button"
-        :disabled="rejectPending"
-        @click="$emit('reject')"
-      >
-        {{ rejectPending ? t("payments.actions.rejecting") : t("payments.actions.reject") }}
-      </button>
+      <div v-if="item && item.status === 'pending'" class="payment-details__actions">
+        <button
+          v-if="item.review_state === 'ready_for_approval'"
+          class="payment-details__approve"
+          type="button"
+          :disabled="approvePending"
+          @click="$emit('approve')"
+        >
+          {{ approvePending ? t("payments.actions.approving") : t("payments.actions.approve") }}
+        </button>
+        <button
+          class="payment-details__reject"
+          type="button"
+          :disabled="rejectPending"
+          @click="$emit('reject')"
+        >
+          {{ rejectPending ? t("payments.actions.rejecting") : t("payments.actions.reject") }}
+        </button>
+      </div>
     </header>
 
     <p v-if="!item" class="payment-details__empty">{{ t("payments.details.empty") }}</p>
-    <dl v-else class="payment-details__grid">
+    <div
+      v-else-if="item.status === 'pending' && item.review_state !== 'ready_for_approval'"
+      class="payment-details__review-banner"
+    >
+      <strong>{{ t(`payments.reviewState.${item.review_state}`) }}</strong>
+      <p>{{ t(`payments.reviewHint.${item.review_state}`) }}</p>
+    </div>
+    <div v-if="item && item.status === 'pending'" class="payment-details__reason">
+      <label class="payment-details__reason-label" for="reject-reason">
+        {{ t("payments.reject.reason") }}
+      </label>
+      <select
+        id="reject-reason"
+        class="payment-details__reason-select"
+        :value="rejectReason"
+        @change="$emit('update:rejectReason', ($event.target as HTMLSelectElement).value)"
+      >
+        <option v-for="reason in rejectReasons" :key="reason" :value="reason">
+          {{ t(`payments.rejectReason.${reason}`) }}
+        </option>
+      </select>
+    </div>
+    <dl v-if="item" class="payment-details__grid">
       <div>
         <dt>{{ t("payments.fields.status") }}</dt>
         <dd>{{ item.status }}</dd>
+      </div>
+      <div>
+        <dt>{{ t("payments.fields.reviewState") }}</dt>
+        <dd>{{ t(`payments.reviewState.${item.review_state}`) }}</dd>
       </div>
       <div>
         <dt>{{ t("payments.fields.parent") }}</dt>
@@ -59,6 +86,10 @@
         <dt>{{ t("payments.fields.updated") }}</dt>
         <dd>{{ formatDate(item.updated_at) }}</dd>
       </div>
+      <div v-if="item.rejected_reason">
+        <dt>{{ t("payments.fields.rejectReason") }}</dt>
+        <dd>{{ t(`payments.rejectReason.${item.rejected_reason}`) }}</dd>
+      </div>
     </dl>
 
     <div v-if="grant" class="payment-details__grant">
@@ -73,22 +104,30 @@
 
 <script setup lang="ts">
 import type {
+  AdminRejectReason,
   AdminPaymentIntentItem,
   CourseAccessGrantItem
 } from "~/features/admin-payments/model/types";
 import { usePreferences } from "~/shared/lib/preferences/use-preferences";
+import { ADMIN_PAYMENT_REJECT_REASONS } from "~/features/admin-payments/model/types";
 
 defineProps<{
   approvePending: boolean;
   errorMessage: string;
   grant: CourseAccessGrantItem | null;
   item: AdminPaymentIntentItem | null;
+  rejectReason: AdminRejectReason;
   rejectPending: boolean;
 }>();
 
-defineEmits<{ approve: []; reject: [] }>();
+defineEmits<{
+  approve: [];
+  reject: [];
+  "update:rejectReason": [value: AdminRejectReason];
+}>();
 
 const { t } = usePreferences();
+const rejectReasons = ADMIN_PAYMENT_REJECT_REASONS;
 
 function formatMoney(amount: number, currency: string) {
   return new Intl.NumberFormat(undefined, {
@@ -121,12 +160,20 @@ function formatDate(value: string) {
   gap: 1rem;
   align-items: start;
 }
+.payment-details__actions {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+}
 .payment-details__header h2,
 .payment-details__header p,
 .payment-details__grant p,
 .payment-details__grant strong,
 .payment-details__empty,
 .payment-details__error,
+.payment-details__review-banner p,
+.payment-details__review-banner strong,
+.payment-details__reason-label,
 .payment-details dt,
 .payment-details dd {
   margin: 0;
@@ -144,6 +191,25 @@ function formatDate(value: string) {
   background: transparent;
   color: var(--c-danger);
   padding: 0.55rem 0.9rem;
+}
+.payment-details__review-banner {
+  display: grid;
+  gap: 0.25rem;
+  padding: 0.8rem 1rem;
+  border: 1px solid color-mix(in oklab, var(--c-warning), white 35%);
+  border-radius: 1rem;
+  background: color-mix(in oklab, var(--c-warning), white 88%);
+}
+.payment-details__reason {
+  display: grid;
+  gap: 0.4rem;
+}
+.payment-details__reason-select {
+  border: 1px solid var(--c-border);
+  border-radius: 0.8rem;
+  background: var(--c-surface);
+  color: var(--c-fg);
+  padding: 0.65rem 0.8rem;
 }
 .payment-details__grid {
   display: grid;

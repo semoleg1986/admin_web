@@ -1,3 +1,27 @@
+export type AdminRejectReason =
+  | "admin_declined"
+  | "payment_verification_failed"
+  | "duplicate_payment_attempt"
+  | "stale_pending_intent"
+  | "conflict_existing_access";
+
+export type AdminPaymentReviewState =
+  | "ready_for_approval"
+  | "stale_pending_intent"
+  | "conflict_existing_access"
+  | "approved"
+  | "rejected"
+  | "cancelled"
+  | "expired";
+
+export const ADMIN_PAYMENT_REJECT_REASONS: AdminRejectReason[] = [
+  "admin_declined",
+  "payment_verification_failed",
+  "duplicate_payment_attempt",
+  "stale_pending_intent",
+  "conflict_existing_access"
+];
+
 export interface AdminPaymentIntentItem {
   payment_intent_id: string;
   parent_id: string;
@@ -10,6 +34,9 @@ export interface AdminPaymentIntentItem {
   bonus_amount: number;
   currency: string;
   expires_at: string | null;
+  rejected_reason: AdminRejectReason | null;
+  review_state: AdminPaymentReviewState;
+  recommended_reject_reason: AdminRejectReason | null;
   created_at: string;
   updated_at: string;
   version: number;

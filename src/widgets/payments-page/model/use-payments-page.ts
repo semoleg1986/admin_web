@@ -1,6 +1,10 @@
 import { useAdminPaymentIntentsQuery, useAdminPaymentsClient } from "~/features/admin-payments";
 import { useSseChannel } from "~/shared/lib/realtime/use-sse-channel";
-import type { CourseAccessGrantItem } from "~/features/admin-payments";
+import type {
+  AdminPaymentIntentItem,
+  AdminRejectReason,
+  CourseAccessGrantItem
+} from "~/features/admin-payments";
 import { ApiRequestError } from "~/shared/api/types";
 import { usePreferences } from "~/shared/lib/preferences/use-preferences";
 
@@ -18,9 +22,14 @@ export function usePaymentsPage() {
   const rejectPending = ref(false);
   const approveError = ref("");
   const grant = ref<CourseAccessGrantItem | null>(null);
+  const rejectReason = ref<AdminRejectReason>("admin_declined");
 
   const items = computed(() => data.value ?? []);
   const selectedId = computed(() => selectedPaymentIntentId.value);
+
+  function resolveRejectReason(item: AdminPaymentIntentItem | null) {
+    return item?.recommended_reject_reason ?? item?.rejected_reason ?? "admin_declined";
+  }
 
   watch(
     items,
@@ -44,6 +53,7 @@ export function usePaymentsPage() {
       detailsPending.value = true;
       try {
         selectedPaymentIntent.value = await paymentsClient.getPaymentIntent(next);
+        rejectReason.value = resolveRejectReason(selectedPaymentIntent.value);
       } catch (error) {
         approveError.value =
           error instanceof ApiRequestError ? error.message : "Failed to load payment intent";
@@ -110,7 +120,7 @@ export function usePaymentsPage() {
     try {
       selectedPaymentIntent.value = await paymentsClient.rejectPaymentIntent(
         selectedPaymentIntentId.value,
-        "stale pending intent"
+        rejectReason.value
       );
       await refresh();
       selectedPaymentIntentId.value = data.value?.[0]?.payment_intent_id ?? "";
@@ -136,6 +146,7 @@ export function usePaymentsPage() {
     grant,
     items,
     pending,
+    rejectReason,
     rejectPending,
     rejectSelected,
     refresh,
