@@ -150,20 +150,23 @@ function formatDate(value: string) {
   display: grid;
   gap: 1rem;
   border: 1px solid var(--c-border);
-  border-radius: 1.25rem;
-  background: var(--c-surface);
-  padding: 1rem;
+  border-radius: 1.1rem;
+  background: color-mix(in oklab, var(--c-surface), black 2%);
+  padding: 1.1rem;
 }
 .payment-details__header {
   display: flex;
   justify-content: space-between;
   gap: 1rem;
   align-items: start;
+  padding-bottom: 0.9rem;
+  border-bottom: 1px solid color-mix(in oklab, var(--c-border), transparent 14%);
 }
 .payment-details__actions {
   display: flex;
   gap: 0.75rem;
   align-items: center;
+  flex-wrap: wrap;
 }
 .payment-details__header h2,
 .payment-details__header p,
@@ -179,52 +182,73 @@ function formatDate(value: string) {
   margin: 0;
 }
 .payment-details__approve {
-  border: 0;
-  border-radius: 999px;
-  background: color-mix(in oklab, var(--c-accent), white 12%);
-  color: white;
-  padding: 0.55rem 0.9rem;
+  border: 1px solid color-mix(in oklab, var(--c-fg), transparent 72%);
+  border-radius: 0.85rem;
+  background: color-mix(in oklab, var(--c-fg), transparent 94%);
+  color: var(--c-fg);
+  padding: 0.8rem 1.1rem;
+  font-weight: 700;
 }
 .payment-details__reject {
-  border: 1px solid color-mix(in oklab, var(--c-danger), white 30%);
-  border-radius: 999px;
+  border: 1px solid color-mix(in oklab, var(--c-danger), transparent 50%);
+  border-radius: 0.85rem;
   background: transparent;
   color: var(--c-danger);
-  padding: 0.55rem 0.9rem;
+  padding: 0.8rem 1.1rem;
+  font-weight: 700;
 }
 .payment-details__review-banner {
   display: grid;
   gap: 0.25rem;
   padding: 0.8rem 1rem;
-  border: 1px solid color-mix(in oklab, var(--c-warning), white 35%);
+  border: 1px solid color-mix(in oklab, #c47f1c, white 35%);
   border-radius: 1rem;
-  background: color-mix(in oklab, var(--c-warning), white 88%);
+  background: color-mix(in oklab, #c47f1c, white 90%);
+  color: #8a5607;
 }
 .payment-details__reason {
   display: grid;
   gap: 0.4rem;
+  padding: 0.95rem 0;
+  border-bottom: 1px solid color-mix(in oklab, var(--c-border), transparent 14%);
 }
 .payment-details__reason-select {
   border: 1px solid var(--c-border);
   border-radius: 0.8rem;
   background: var(--c-surface);
   color: var(--c-fg);
-  padding: 0.65rem 0.8rem;
+  padding: 0.85rem 0.9rem;
 }
 .payment-details__grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 0.75rem 1rem;
+  gap: 0;
+  border: 1px solid color-mix(in oklab, var(--c-border), transparent 8%);
+  border-radius: 1rem;
+  overflow: hidden;
+}
+.payment-details__grid > div {
+  padding: 0.9rem 1rem;
+  border-bottom: 1px solid color-mix(in oklab, var(--c-border), transparent 8%);
+}
+.payment-details__grid > div:nth-child(odd) {
+  border-right: 1px solid color-mix(in oklab, var(--c-border), transparent 8%);
+}
+.payment-details__grid > div:nth-last-child(-n + 2) {
+  border-bottom: 0;
 }
 .payment-details__grid dt {
   color: var(--c-muted);
   font-size: 0.82rem;
+  margin-bottom: 0.3rem;
 }
 .payment-details__grant {
   display: grid;
   gap: 0.2rem;
-  padding-top: 0.5rem;
-  border-top: 1px solid var(--c-border);
+  padding: 1rem;
+  border: 1px solid color-mix(in oklab, var(--c-accent), white 58%);
+  border-radius: 1rem;
+  background: color-mix(in oklab, var(--c-accent), white 92%);
 }
 .payment-details__error {
   color: var(--c-danger);
@@ -235,6 +259,15 @@ function formatDate(value: string) {
 @media (max-width: 767px) {
   .payment-details__grid {
     grid-template-columns: minmax(0, 1fr);
+  }
+  .payment-details__grid > div {
+    border-right: 0;
+  }
+  .payment-details__grid > div:nth-last-child(-n + 2) {
+    border-bottom: 1px solid color-mix(in oklab, var(--c-border), transparent 8%);
+  }
+  .payment-details__grid > div:last-child {
+    border-bottom: 0;
   }
 }
 </style>

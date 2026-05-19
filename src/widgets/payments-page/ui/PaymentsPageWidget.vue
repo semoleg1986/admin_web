@@ -58,12 +58,13 @@ const {
 .payments-page__grid {
   display: grid;
   gap: 1rem;
-  grid-template-columns: minmax(20rem, 26rem) minmax(0, 1fr);
+  grid-template-columns: minmax(0, 1.45fr) minmax(24rem, 0.95fr);
+  align-items: start;
 }
 .payments-page__error {
   color: var(--c-danger);
 }
-@media (max-width: 1023px) {
+@media (max-width: 1279px) {
   .payments-page__grid {
     grid-template-columns: minmax(0, 1fr);
   }
