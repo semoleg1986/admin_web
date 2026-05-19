@@ -22,7 +22,9 @@
         :error-message="approveError"
         :grant="grant"
         :item="selectedPaymentIntent"
+        :reject-pending="rejectPending"
         @approve="approveSelected"
+        @reject="rejectSelected"
       />
     </div>
   </main>
@@ -39,6 +41,8 @@ const {
   approveSelected,
   grant,
   items,
+  rejectPending,
+  rejectSelected,
   refresh,
   selectedId,
   selectedPaymentIntent,

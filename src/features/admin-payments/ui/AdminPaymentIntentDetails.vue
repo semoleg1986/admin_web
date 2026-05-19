@@ -14,6 +14,15 @@
       >
         {{ approvePending ? t("payments.actions.approving") : t("payments.actions.approve") }}
       </button>
+      <button
+        v-if="item && item.status === 'pending'"
+        class="payment-details__reject"
+        type="button"
+        :disabled="rejectPending"
+        @click="$emit('reject')"
+      >
+        {{ rejectPending ? t("payments.actions.rejecting") : t("payments.actions.reject") }}
+      </button>
     </header>
 
     <p v-if="!item" class="payment-details__empty">{{ t("payments.details.empty") }}</p>
@@ -74,9 +83,10 @@ defineProps<{
   errorMessage: string;
   grant: CourseAccessGrantItem | null;
   item: AdminPaymentIntentItem | null;
+  rejectPending: boolean;
 }>();
 
-defineEmits<{ approve: [] }>();
+defineEmits<{ approve: []; reject: [] }>();
 
 const { t } = usePreferences();
 
@@ -126,6 +136,13 @@ function formatDate(value: string) {
   border-radius: 999px;
   background: color-mix(in oklab, var(--c-accent), white 12%);
   color: white;
+  padding: 0.55rem 0.9rem;
+}
+.payment-details__reject {
+  border: 1px solid color-mix(in oklab, var(--c-danger), white 30%);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--c-danger);
   padding: 0.55rem 0.9rem;
 }
 .payment-details__grid {

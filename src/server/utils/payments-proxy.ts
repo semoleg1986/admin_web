@@ -92,3 +92,12 @@ export async function proxyApproveAdminPaymentIntent(event: H3Event, paymentInte
     method: "POST"
   });
 }
+
+export async function proxyRejectAdminPaymentIntent(event: H3Event, paymentIntentId: string) {
+  const body = await readBody(event);
+  return await fetchPayments(event, `/v1/admin/payments/${paymentIntentId}/reject`, {
+    body: JSON.stringify(body ?? {}),
+    headers: { "Content-Type": "application/json" },
+    method: "POST"
+  });
+}

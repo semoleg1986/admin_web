@@ -15,6 +15,7 @@ export function usePaymentsPage() {
   > | null>(null);
   const detailsPending = ref(false);
   const approvePending = ref(false);
+  const rejectPending = ref(false);
   const approveError = ref("");
   const grant = ref<CourseAccessGrantItem | null>(null);
 
@@ -99,6 +100,28 @@ export function usePaymentsPage() {
     }
   }
 
+  async function rejectSelected() {
+    if (!selectedPaymentIntentId.value) {
+      return;
+    }
+    rejectPending.value = true;
+    approveError.value = "";
+    grant.value = null;
+    try {
+      selectedPaymentIntent.value = await paymentsClient.rejectPaymentIntent(
+        selectedPaymentIntentId.value,
+        "stale pending intent"
+      );
+      await refresh();
+      selectedPaymentIntentId.value = data.value?.[0]?.payment_intent_id ?? "";
+    } catch (error) {
+      approveError.value =
+        error instanceof ApiRequestError ? error.message : "Failed to reject payment intent";
+    } finally {
+      rejectPending.value = false;
+    }
+  }
+
   useSeoMeta({
     title: computed(() => t("payments.title")),
     description: computed(() => t("payments.subtitle"))
@@ -113,6 +136,8 @@ export function usePaymentsPage() {
     grant,
     items,
     pending,
+    rejectPending,
+    rejectSelected,
     refresh,
     selectedId,
     selectedPaymentIntent,

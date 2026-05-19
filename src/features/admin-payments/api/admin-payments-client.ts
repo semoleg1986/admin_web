@@ -14,6 +14,12 @@ export function useAdminPaymentsClient() {
         {}
       );
     },
+    rejectPaymentIntent(paymentIntentId: string, reason: string) {
+      return api.post<AdminPaymentIntentItem, { reason: string }>(
+        `/admin/payments/intents/${paymentIntentId}/reject`,
+        { reason }
+      );
+    },
     getPaymentIntent(paymentIntentId: string) {
       return api.get<AdminPaymentIntentItem>(`/admin/payments/intents/${paymentIntentId}`);
     },
