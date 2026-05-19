@@ -23,6 +23,7 @@ export function usePaymentsPage() {
   const approveError = ref("");
   const grant = ref<CourseAccessGrantItem | null>(null);
   const rejectReason = ref<AdminRejectReason>("admin_declined");
+  const sseRefreshQueued = ref(false);
 
   const items = computed(() => data.value ?? []);
   const selectedId = computed(() => selectedPaymentIntentId.value);
@@ -66,21 +67,39 @@ export function usePaymentsPage() {
 
   const streamUrl = computed(() => "/api/admin/payments/stream?status=pending");
 
+  const isSseRefreshBlocked = computed(
+    () => approvePending.value || rejectPending.value || detailsPending.value
+  );
+
+  async function refreshFromStream() {
+    await refresh();
+    if (selectedPaymentIntentId.value) {
+      try {
+        selectedPaymentIntent.value = await paymentsClient.getPaymentIntent(
+          selectedPaymentIntentId.value
+        );
+        rejectReason.value = resolveRejectReason(selectedPaymentIntent.value);
+      } catch {
+        selectedPaymentIntent.value = null;
+      }
+    }
+  }
+
+  watch(isSseRefreshBlocked, async (blocked) => {
+    if (blocked || !sseRefreshQueued.value) {
+      return;
+    }
+    sseRefreshQueued.value = false;
+    await refreshFromStream();
+  });
+
   useSseChannel(streamUrl, {
     onMessage: async () => {
-      if (approvePending.value || detailsPending.value) {
+      if (isSseRefreshBlocked.value) {
+        sseRefreshQueued.value = true;
         return;
       }
-      await refresh();
-      if (selectedPaymentIntentId.value) {
-        try {
-          selectedPaymentIntent.value = await paymentsClient.getPaymentIntent(
-            selectedPaymentIntentId.value
-          );
-        } catch {
-          selectedPaymentIntent.value = null;
-        }
-      }
+      await refreshFromStream();
     }
   });
 
