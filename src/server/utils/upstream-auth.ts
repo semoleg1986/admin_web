@@ -1,3 +1,4 @@
+import { Buffer } from "node:buffer";
 import { getRequestHeader } from "h3";
 import type { H3Event } from "h3";
 
@@ -14,6 +15,12 @@ interface AuthTokenPairResponse {
   refresh_token: string;
   token_type: "Bearer";
 }
+
+interface JwtPayload {
+  exp?: number;
+}
+
+const ACCESS_TOKEN_EXP_SKEW_SECONDS = 30;
 
 function authServiceBaseUrl() {
   const runtimeConfig = useRuntimeConfig();
@@ -34,6 +41,30 @@ function forwardTracingHeaders(event: H3Event, headers: Headers) {
   if (correlationId) {
     headers.set("X-Correlation-ID", correlationId);
   }
+}
+
+function decodeJwtPayload(token: string) {
+  const [, payload = ""] = token.split(".");
+
+  if (!payload) {
+    return null;
+  }
+
+  try {
+    return JSON.parse(Buffer.from(payload, "base64url").toString("utf8")) as JwtPayload;
+  } catch {
+    return null;
+  }
+}
+
+function isTokenExpired(token: string) {
+  const payload = decodeJwtPayload(token);
+  if (typeof payload?.exp !== "number") {
+    return false;
+  }
+
+  const nowSeconds = Math.floor(Date.now() / 1000);
+  return payload.exp <= nowSeconds + ACCESS_TOKEN_EXP_SKEW_SECONDS;
 }
 
 async function exchangeRefreshToken(event: H3Event) {
@@ -63,12 +94,23 @@ async function exchangeRefreshToken(event: H3Event) {
     expiresIn: tokenPair.expires_in,
     refreshToken: tokenPair.refresh_token
   });
+  event.context.authorizedAccessToken = tokenPair.access_token;
   return tokenPair.access_token;
 }
 
 export async function getAuthorizedAccessToken(event: H3Event) {
+  const cachedToken =
+    typeof event.context.authorizedAccessToken === "string"
+      ? event.context.authorizedAccessToken
+      : null;
+
+  if (cachedToken && !isTokenExpired(cachedToken)) {
+    return cachedToken;
+  }
+
   const accessToken = getAccessToken(event);
-  if (accessToken) {
+  if (accessToken && !isTokenExpired(accessToken)) {
+    event.context.authorizedAccessToken = accessToken;
     return accessToken;
   }
 
