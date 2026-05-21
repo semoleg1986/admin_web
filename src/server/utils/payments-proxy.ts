@@ -10,7 +10,18 @@ function paymentsServiceBaseUrl() {
   return String(runtimeConfig.paymentsServiceBaseUrl || "http://localhost:8004").replace(/\/$/, "");
 }
 
+function setPrivateNoStoreHeaders(event: H3Event) {
+  setHeader(
+    event,
+    "Cache-Control",
+    "private, no-cache, no-store, no-transform, must-revalidate, max-age=0"
+  );
+  setHeader(event, "Pragma", "no-cache");
+  setHeader(event, "Expires", "0");
+}
+
 async function forwardUpstream(event: H3Event, response: Response) {
+  setPrivateNoStoreHeaders(event);
   const requestId = response.headers.get("x-request-id");
   const correlationId = response.headers.get("x-correlation-id");
 
@@ -30,6 +41,7 @@ async function fetchPayments(
   path: string,
   init: { body?: string; headers?: Headers | Record<string, string>; method: string }
 ) {
+  setPrivateNoStoreHeaders(event);
   const accessToken = await getAuthorizedAccessToken(event);
   if (!accessToken) {
     clearAuthCookies(event);
