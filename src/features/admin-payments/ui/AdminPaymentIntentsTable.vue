@@ -51,6 +51,8 @@
 
 <script setup lang="ts">
 import type { AdminPaymentIntentItem } from "~/features/admin-payments/model/types";
+import { formatDateTime } from "~/shared/lib/formatting/format-date-time";
+import { formatMoney } from "~/shared/lib/formatting/format-money";
 import { usePreferences } from "~/shared/lib/preferences/use-preferences";
 
 defineProps<{
@@ -64,21 +66,8 @@ defineEmits<{
 }>();
 
 const { t } = usePreferences();
-
-function formatMoney(amount: number, currency: string) {
-  return new Intl.NumberFormat(undefined, {
-    currency,
-    maximumFractionDigits: 0,
-    style: "currency"
-  }).format(amount);
-}
-
-function formatDate(value: string) {
-  return new Intl.DateTimeFormat(undefined, {
-    dateStyle: "short",
-    timeStyle: "short"
-  }).format(new Date(value));
-}
+const formatDate = (value: string) =>
+  formatDateTime(value, { dateStyle: "short", timeStyle: "short" });
 
 function shortId(value: string) {
   return value.slice(0, 8);
