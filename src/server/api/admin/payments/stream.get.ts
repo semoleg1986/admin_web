@@ -12,9 +12,16 @@ export default defineEventHandler(async (event) => {
   let lastSnapshot = "";
 
   const fetchSnapshot = async () => {
+    const cacheBuster = Date.now();
     const list = await fetchWithEvent(
       event,
-      `/api/admin/payments/intents?status=${encodeURIComponent(status)}&limit=50&offset=0`
+      `/api/admin/payments/intents?status=${encodeURIComponent(status)}&limit=50&offset=0&_stream_ts=${cacheBuster}`,
+      {
+        headers: {
+          "Cache-Control": "no-cache",
+          Pragma: "no-cache"
+        }
+      }
     );
     return JSON.stringify(list);
   };
