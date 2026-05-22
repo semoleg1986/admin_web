@@ -1,4 +1,5 @@
 import type { FetchError, FetchOptions } from "ofetch";
+import { useRequestFetch } from "nuxt/app";
 
 import { ApiRequestError, type ApiProblemDetails } from "~/shared/api/types";
 import { normalizeApiError, resolveApiUrl } from "~/shared/api/http";
@@ -16,8 +17,13 @@ export function useApiClient() {
     path: string,
     options: ApiRequestOptions<TBody> = {}
   ) {
+    const fetchImpl = import.meta.server ? useRequestFetch() : $fetch;
+
     try {
-      return await $fetch<TResponse>(resolveApiUrl(path, runtimeConfig.public.apiBaseUrl), options);
+      return await fetchImpl<TResponse>(
+        resolveApiUrl(path, runtimeConfig.public.apiBaseUrl),
+        options
+      );
     } catch (error) {
       const normalized = normalizeApiError(
         error as FetchError<ApiProblemDetails> | null | undefined
