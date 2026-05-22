@@ -26,6 +26,7 @@ export function usePaymentsPage() {
   const grant = ref<CourseAccessGrantItem | null>(null);
   const rejectReason = ref<AdminRejectReason>("admin_declined");
   const queuedSseSnapshot = ref<string | null>(null);
+  const streamFallbackMode = ref(false);
 
   const items = computed(() => itemsState.value);
   const selectedId = computed(() => selectedPaymentIntentId.value);
@@ -130,6 +131,15 @@ export function usePaymentsPage() {
   });
 
   useSseChannel(streamUrl, {
+    onOpen: () => {
+      streamFallbackMode.value = false;
+      stopPolling();
+    },
+    onError: () => {
+      streamFallbackMode.value = true;
+      startPolling();
+      void refreshFromStream();
+    },
     onMessage: async (message) => {
       if (isSseRefreshBlocked.value) {
         queuedSseSnapshot.value = message;
@@ -139,19 +149,44 @@ export function usePaymentsPage() {
     }
   });
 
-  if (import.meta.client) {
+  function stopPolling() {
+    if (pollingTimer) {
+      clearInterval(pollingTimer);
+      pollingTimer = null;
+    }
+  }
+
+  function startPolling() {
+    if (pollingTimer) {
+      return;
+    }
     pollingTimer = setInterval(() => {
       if (isSseRefreshBlocked.value) {
         return;
       }
       void refreshFromStream();
     }, 5000);
+  }
+
+  if (import.meta.client) {
+    watch(streamUrl, (nextUrl) => {
+      if (nextUrl) {
+        return;
+      }
+      streamFallbackMode.value = false;
+      stopPolling();
+    });
+
+    watch(streamFallbackMode, (enabled) => {
+      if (enabled) {
+        startPolling();
+        return;
+      }
+      stopPolling();
+    });
 
     onBeforeUnmount(() => {
-      if (pollingTimer) {
-        clearInterval(pollingTimer);
-        pollingTimer = null;
-      }
+      stopPolling();
     });
   }
 
