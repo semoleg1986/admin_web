@@ -13,6 +13,7 @@ export function usePaymentsPage() {
   const paymentsClient = useAdminPaymentsClient();
   const { data, pending, refresh, apiError } = useAdminPaymentIntentsQuery("pending");
 
+  const itemsState = ref<AdminPaymentIntentItem[]>([]);
   const selectedPaymentIntentId = ref("");
   const selectedPaymentIntent = ref<Awaited<
     ReturnType<typeof paymentsClient.getPaymentIntent>
@@ -23,9 +24,9 @@ export function usePaymentsPage() {
   const approveError = ref("");
   const grant = ref<CourseAccessGrantItem | null>(null);
   const rejectReason = ref<AdminRejectReason>("admin_declined");
-  const sseRefreshQueued = ref(false);
+  const queuedSseSnapshot = ref<string | null>(null);
 
-  const items = computed(() => data.value ?? []);
+  const items = computed(() => itemsState.value);
   const selectedId = computed(() => selectedPaymentIntentId.value);
 
   function resolveRejectReason(item: AdminPaymentIntentItem | null) {
@@ -33,11 +34,29 @@ export function usePaymentsPage() {
   }
 
   watch(
+    data,
+    (next) => {
+      itemsState.value = next ?? [];
+    },
+    { immediate: true }
+  );
+
+  watch(
     items,
     (next) => {
-      if (!selectedPaymentIntentId.value && next.length > 0) {
-        selectedPaymentIntentId.value = next[0].payment_intent_id;
+      if (next.length === 0) {
+        selectedPaymentIntentId.value = "";
+        return;
       }
+
+      const hasSelected = next.some(
+        (item) => item.payment_intent_id === selectedPaymentIntentId.value
+      );
+      if (hasSelected) {
+        return;
+      }
+
+      selectedPaymentIntentId.value = next[0].payment_intent_id;
     },
     { immediate: true }
   );
@@ -71,8 +90,22 @@ export function usePaymentsPage() {
     () => approvePending.value || rejectPending.value || detailsPending.value
   );
 
-  async function refreshFromStream() {
-    await refresh();
+  function applySnapshot(message: string) {
+    const parsed = JSON.parse(message) as unknown;
+    if (!Array.isArray(parsed)) {
+      throw new Error("Invalid SSE snapshot payload");
+    }
+    itemsState.value = parsed as AdminPaymentIntentItem[];
+  }
+
+  async function refreshFromStream(message?: string) {
+    if (message) {
+      applySnapshot(message);
+    } else {
+      await refresh();
+      itemsState.value = data.value ?? [];
+    }
+
     if (selectedPaymentIntentId.value) {
       try {
         selectedPaymentIntent.value = await paymentsClient.getPaymentIntent(
@@ -86,20 +119,21 @@ export function usePaymentsPage() {
   }
 
   watch(isSseRefreshBlocked, async (blocked) => {
-    if (blocked || !sseRefreshQueued.value) {
+    if (blocked || !queuedSseSnapshot.value) {
       return;
     }
-    sseRefreshQueued.value = false;
-    await refreshFromStream();
+    const snapshot = queuedSseSnapshot.value;
+    queuedSseSnapshot.value = null;
+    await refreshFromStream(snapshot);
   });
 
   useSseChannel(streamUrl, {
-    onMessage: async () => {
+    onMessage: async (message) => {
       if (isSseRefreshBlocked.value) {
-        sseRefreshQueued.value = true;
+        queuedSseSnapshot.value = message;
         return;
       }
-      await refreshFromStream();
+      await refreshFromStream(message);
     }
   });
 
