@@ -1,5 +1,6 @@
 import { useAdminPaymentIntentsQuery, useAdminPaymentsClient } from "~/features/admin-payments";
 import { useSseChannel } from "~/shared/lib/realtime/use-sse-channel";
+import { onBeforeUnmount } from "vue";
 import type {
   AdminPaymentIntentItem,
   AdminRejectReason,
@@ -89,6 +90,7 @@ export function usePaymentsPage() {
   const isSseRefreshBlocked = computed(
     () => approvePending.value || rejectPending.value || detailsPending.value
   );
+  let pollingTimer: ReturnType<typeof setInterval> | null = null;
 
   function applySnapshot(message: string) {
     const parsed = JSON.parse(message) as unknown;
@@ -136,6 +138,22 @@ export function usePaymentsPage() {
       await refreshFromStream(message);
     }
   });
+
+  if (import.meta.client) {
+    pollingTimer = setInterval(() => {
+      if (isSseRefreshBlocked.value) {
+        return;
+      }
+      void refreshFromStream();
+    }, 5000);
+
+    onBeforeUnmount(() => {
+      if (pollingTimer) {
+        clearInterval(pollingTimer);
+        pollingTimer = null;
+      }
+    });
+  }
 
   async function approveSelected() {
     if (!selectedPaymentIntentId.value) {
