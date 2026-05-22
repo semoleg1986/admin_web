@@ -1,4 +1,4 @@
-import { createEventStream, fetchWithEvent, getQuery } from "h3";
+import { createEventStream, fetchWithEvent, getQuery, getRequestURL } from "h3";
 
 const SNAPSHOT_INTERVAL_MS = 5000;
 const HEARTBEAT_INTERVAL_MS = 15000;
@@ -6,6 +6,7 @@ const HEARTBEAT_INTERVAL_MS = 15000;
 export default defineEventHandler(async (event) => {
   const query = getQuery(event);
   const status = typeof query.status === "string" && query.status ? query.status : "pending";
+  const requestOrigin = getRequestURL(event).origin;
 
   const eventStream = createEventStream(event);
   let disposed = false;
@@ -13,16 +14,16 @@ export default defineEventHandler(async (event) => {
 
   const fetchSnapshot = async () => {
     const cacheBuster = Date.now();
-    const list = await fetchWithEvent(
-      event,
+    const snapshotUrl = new URL(
       `/api/admin/payments/intents?status=${encodeURIComponent(status)}&limit=50&offset=0&_stream_ts=${cacheBuster}`,
-      {
-        headers: {
-          "Cache-Control": "no-cache",
-          Pragma: "no-cache"
-        }
-      }
+      requestOrigin
     );
+    const list = await fetchWithEvent(event, snapshotUrl.toString(), {
+      headers: {
+        "Cache-Control": "no-cache",
+        Pragma: "no-cache"
+      }
+    });
     return JSON.stringify(list);
   };
 
