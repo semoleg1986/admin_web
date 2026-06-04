@@ -18,25 +18,32 @@
 
       <form class="users-invite__form" @submit.prevent="createInvite">
         <label class="users-invite__field">
-          <span>{{ t("users.invite.userId") }}</span>
+          <span>{{ t("users.invite.email") }}</span>
           <input
-            v-model.trim="inviteUserId"
-            autocomplete="off"
-            inputmode="text"
-            name="staff-user-id"
-            :placeholder="t('users.invite.userIdPlaceholder')"
+            v-model.trim="staffEmail"
+            autocomplete="email"
+            inputmode="email"
+            name="staff-email"
+            :placeholder="t('users.invite.emailPlaceholder')"
+            type="email"
+          />
+        </label>
+
+        <label class="users-invite__field">
+          <span>{{ t("users.invite.displayName") }}</span>
+          <input
+            v-model.trim="staffDisplayName"
+            autocomplete="name"
+            name="staff-display-name"
+            :placeholder="t('users.invite.displayNamePlaceholder')"
             type="text"
           />
         </label>
 
         <fieldset class="users-invite__roles">
-          <legend>{{ t("users.invite.roles") }}</legend>
+          <legend>{{ t("users.invite.role") }}</legend>
           <label v-for="role in inviteRoles" :key="role" class="users-invite__role">
-            <input
-              :checked="selectedInviteRoles.includes(role)"
-              type="checkbox"
-              @change="toggleInviteRole(role)"
-            />
+            <input v-model="staffRole" :value="role" name="staff-role" type="radio" />
             <span>{{ t(`users.invite.role.${role}`) }}</span>
           </label>
         </fieldset>
@@ -54,15 +61,19 @@
 
       <p v-if="error" class="users-invite__error">{{ error }}</p>
 
-      <div v-if="invite" class="users-invite__result">
+      <div v-if="onboarding" class="users-invite__result">
         <div>
           <span class="admin-card__eyebrow">{{ t("users.invite.resultEyebrow") }}</span>
           <h3>{{ t("users.invite.resultTitle") }}</h3>
           <p>
-            {{ invite.email }} ·
-            {{ invite.roles.map((role) => t(`users.invite.role.${role}`)).join(", ") }}
+            {{ onboarding.user.display_name }} · {{ onboarding.user.email }} ·
+            {{ onboarding.invite.roles.map((role) => t(`users.invite.role.${role}`)).join(", ") }}
           </p>
-          <p>{{ t("users.invite.expires") }}: {{ new Date(invite.expires_at).toLocaleString() }}</p>
+          <p>User ID: {{ onboarding.user.user_id }}</p>
+          <p>
+            {{ t("users.invite.expires") }}:
+            {{ new Date(onboarding.invite.expires_at).toLocaleString() }}
+          </p>
         </div>
 
         <template v-if="inviteLink">
@@ -93,14 +104,14 @@ const {
   copyInviteLink,
   createInvite,
   error,
-  invite,
   inviteLink,
   inviteRoles,
-  inviteUserId,
+  onboarding,
   pending,
-  selectedInviteRoles,
-  t,
-  toggleInviteRole
+  staffDisplayName,
+  staffEmail,
+  staffRole,
+  t
 } = useUsersPage();
 </script>
 
@@ -129,7 +140,7 @@ const {
 .users-invite__form {
   display: grid;
   gap: 1rem;
-  grid-template-columns: minmax(0, 1.2fr) minmax(240px, 0.8fr);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   align-items: end;
 }
 

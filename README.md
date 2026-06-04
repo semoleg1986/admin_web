@@ -43,8 +43,8 @@ Key variables:
 - settings panel inside sidebar with theme, language, backend status, and logout
 - dashboard currently shows available catalog-derived course counts and reserves
   users/payments/access metrics for backend summary endpoints
-- users page can create one-time Studio onboarding links for existing active
-  teacher/content manager profiles through `users_service`
+- users page can create teacher/content manager profiles and one-time Studio
+  onboarding links through `users_service`
 
 ## Tests and quality
 
