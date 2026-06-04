@@ -178,13 +178,8 @@ const {
   min-height: 100dvh;
   display: grid;
   grid-template-columns: 280px minmax(0, 1fr);
-  background:
-    radial-gradient(
-      circle at top left,
-      color-mix(in oklab, var(--c-accent), white 84%) 0%,
-      transparent 26%
-    ),
-    linear-gradient(180deg, color-mix(in oklab, var(--c-bg), white 10%) 0%, var(--c-bg) 100%);
+  background: var(--c-bg);
+  transition: grid-template-columns 0.24s ease;
 }
 
 .admin-shell--collapsed {
@@ -195,13 +190,17 @@ const {
   position: sticky;
   top: 0;
   height: 100dvh;
-  padding: 1.25rem 1rem;
+  padding: 1rem 0.75rem;
   border-right: 1px solid var(--c-border);
-  background: color-mix(in oklab, var(--c-surface), white 8%);
+  background: var(--c-surface);
   display: flex;
   flex-direction: column;
-  gap: 1.25rem;
+  gap: 1rem;
   z-index: 3;
+  transition:
+    padding 0.24s ease,
+    background-color 0.2s ease,
+    border-color 0.2s ease;
 }
 
 .admin-sidebar__brand,
@@ -220,19 +219,15 @@ const {
 }
 
 .admin-sidebar__logo {
-  width: 2.75rem;
-  height: 2.75rem;
-  border-radius: 0.95rem;
+  width: 2.45rem;
+  height: 2.45rem;
+  border-radius: 0.8rem;
   display: grid;
   place-items: center;
-  background: linear-gradient(
-    135deg,
-    color-mix(in oklab, var(--c-accent), black 8%) 0%,
-    #d9a066 100%
-  );
-  color: white;
+  background: var(--c-accent);
+  color: var(--c-surface);
   font-weight: 800;
-  font-size: 1.2rem;
+  font-size: 1.05rem;
   flex: 0 0 auto;
 }
 
@@ -243,12 +238,16 @@ const {
 }
 
 .admin-sidebar__brand-copy strong {
-  font-size: 1.02rem;
+  color: var(--c-fg);
+  font-size: 0.96rem;
+  font-weight: 600;
 }
 
 .admin-sidebar__brand-copy span {
   color: var(--c-muted);
-  font-size: 0.82rem;
+  font-size: 0.7rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
 }
 
 .admin-sidebar__nav {
@@ -270,10 +269,10 @@ const {
 .admin-nav-group__label {
   margin: 0 0 0.1rem;
   padding: 0 0.75rem;
-  color: color-mix(in oklab, var(--c-muted), transparent 12%);
+  color: var(--c-muted);
   font-size: 0.68rem;
   font-weight: 800;
-  letter-spacing: 0.11em;
+  letter-spacing: 0.13em;
   text-transform: uppercase;
 }
 
@@ -288,26 +287,35 @@ const {
 .admin-nav-link {
   display: flex;
   align-items: center;
-  gap: 0.85rem;
-  min-height: 3rem;
-  padding: 0.8rem 0.9rem;
-  border-radius: 1rem;
+  gap: 0.75rem;
+  min-height: 2.55rem;
+  padding: 0.65rem 0.75rem;
+  border: 1px solid transparent;
+  border-radius: 8px;
   color: var(--c-muted);
   text-decoration: none;
+  font-size: 0.88rem;
+  font-weight: 500;
+  line-height: 1.2;
   transition:
-    background 160ms ease,
-    color 160ms ease,
-    transform 160ms ease;
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    color 0.2s ease,
+    transform 0.2s ease;
 }
 
 .admin-nav-link:hover,
 .admin-nav-link.router-link-active {
   color: var(--c-fg);
-  background: color-mix(in oklab, var(--c-surface), var(--c-accent) 10%);
+  background: var(--c-hover);
 }
 
 .admin-nav-link.router-link-active {
-  box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--c-accent), white 60%);
+  border-color: var(--c-border);
+}
+
+.admin-nav-link:active {
+  transform: scale(0.98);
 }
 
 .admin-nav-link--icon-only,
@@ -333,17 +341,33 @@ const {
 .admin-sidebar__settings-trigger,
 .admin-shell__mobile-toggle {
   border: 1px solid var(--c-border);
-  border-radius: 1rem;
+  border-radius: 8px;
   background: var(--c-surface);
   color: var(--c-fg);
   cursor: pointer;
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.admin-sidebar__collapse:hover,
+.admin-sidebar__settings-trigger:hover,
+.admin-shell__mobile-toggle:hover {
+  background: var(--c-hover);
+}
+
+.admin-sidebar__collapse:active,
+.admin-sidebar__settings-trigger:active,
+.admin-shell__mobile-toggle:active {
+  transform: scale(0.97);
 }
 
 .admin-sidebar__collapse {
   display: inline-grid;
   place-items: center;
-  width: 3rem;
-  height: 3rem;
+  width: 2.45rem;
+  height: 2.45rem;
   padding: 0;
 }
 
@@ -351,9 +375,11 @@ const {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 0.7rem;
-  min-height: 3rem;
-  padding: 0.8rem 0.9rem;
+  gap: 0.65rem;
+  min-height: 2.55rem;
+  padding: 0.65rem 0.75rem;
+  font-size: 0.88rem;
+  font-weight: 500;
 }
 
 .admin-sidebar__settings-panel {
@@ -380,13 +406,14 @@ const {
   display: none;
   place-items: center;
   z-index: 2;
-  box-shadow: 0 10px 28px rgba(16, 28, 34, 0.12);
+  box-shadow: 0 10px 24px var(--c-shadow);
 }
 
 .admin-shell__page {
   flex: 1;
   min-width: 0;
   padding: 1.25rem 1.25rem 1.5rem;
+  animation: admin-page-enter 0.22s ease both;
 }
 
 .admin-shell__backdrop {
@@ -411,8 +438,8 @@ const {
     top: 0;
     transform: translateX(-100%);
     width: min(86vw, 320px);
-    transition: transform 180ms ease;
-    box-shadow: 0 16px 60px rgba(12, 22, 28, 0.24);
+    transition: transform 0.24s ease;
+    box-shadow: 0 16px 60px rgba(15, 23, 42, 0.24);
   }
 
   .admin-sidebar__settings-panel {
@@ -439,6 +466,18 @@ const {
 
   .admin-shell__page {
     padding: 4.75rem 1rem 1rem;
+  }
+}
+
+@keyframes admin-page-enter {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 </style>

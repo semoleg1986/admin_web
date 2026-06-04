@@ -83,18 +83,22 @@ defineExpose({
   display: grid;
   place-items: center;
   padding: 2rem;
+  background:
+    radial-gradient(circle at 15% 15%, rgba(59, 130, 246, 0.16), transparent 42%),
+    radial-gradient(circle at 85% 85%, rgba(2, 132, 199, 0.12), transparent 44%), var(--c-bg);
 }
 
 .admin-login__card {
   width: min(100%, 28rem);
   border: 1px solid var(--c-border);
-  border-radius: 1.5rem;
-  background: color-mix(in oklab, var(--c-surface), white 8%);
-  box-shadow: 0 18px 40px rgba(16, 28, 34, 0.08);
+  border-radius: 16px;
+  background: var(--c-surface);
+  box-shadow: 0 10px 24px var(--c-shadow);
   padding: 1.5rem;
   display: flex;
   flex-direction: column;
   gap: 1.25rem;
+  animation: admin-login-enter 0.22s ease both;
 }
 
 .admin-login__brand {
@@ -113,18 +117,14 @@ defineExpose({
 }
 
 .admin-login__logo {
-  width: 3.25rem;
-  height: 3.25rem;
-  border-radius: 1.1rem;
+  width: 2.9rem;
+  height: 2.9rem;
+  border-radius: 0.9rem;
   display: grid;
   place-items: center;
-  background: linear-gradient(
-    135deg,
-    color-mix(in oklab, var(--c-accent), black 8%) 0%,
-    #d9a066 100%
-  );
-  color: white;
-  font-size: 1.4rem;
+  background: var(--c-accent);
+  color: var(--c-surface);
+  font-size: 1.2rem;
   font-weight: 800;
   flex: 0 0 auto;
 }
@@ -147,12 +147,21 @@ defineExpose({
 }
 
 .admin-login__field input {
-  min-height: 3rem;
-  border-radius: 0.95rem;
+  min-height: 2.75rem;
+  border-radius: 10px;
   border: 1px solid var(--c-border);
   padding: 0 0.9rem;
   background: var(--c-surface);
   color: var(--c-fg);
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.admin-login__field input:focus {
+  border-color: var(--c-focus);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--c-focus) 22%, transparent);
+  outline: none;
 }
 
 .admin-login__message {
@@ -161,17 +170,37 @@ defineExpose({
 }
 
 .admin-login__submit {
-  min-height: 3rem;
+  min-height: 2.75rem;
   border: 0;
-  border-radius: 0.95rem;
-  background: color-mix(in oklab, var(--c-accent), white 12%);
-  color: white;
+  border-radius: 10px;
+  background: var(--c-accent);
+  color: var(--c-surface);
   font-weight: 700;
   cursor: pointer;
+  transition:
+    opacity 0.2s ease,
+    transform 0.2s ease,
+    background-color 0.2s ease;
+}
+
+.admin-login__submit:not(:disabled):active {
+  transform: scale(0.98);
 }
 
 .admin-login__submit:disabled {
   opacity: 0.7;
   cursor: progress;
+}
+
+@keyframes admin-login-enter {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 </style>

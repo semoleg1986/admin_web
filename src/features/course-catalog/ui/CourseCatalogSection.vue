@@ -28,13 +28,13 @@ const { t } = usePreferences();
 
 <style scoped>
 .catalog {
-  margin-top: 2rem;
+  margin-top: 1rem;
 }
 
 .grid {
   list-style: none;
   display: grid;
-  gap: 1rem;
+  gap: 0.8rem;
   grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
   padding: 0;
 }
@@ -44,6 +44,16 @@ const { t } = usePreferences();
   border: 1px solid var(--c-border);
   border-radius: 12px;
   padding: 1rem;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.2s ease,
+    background-color 0.2s ease;
+}
+
+.card:hover {
+  border-color: color-mix(in srgb, var(--c-border) 72%, var(--c-fg) 28%);
+  box-shadow: 0 10px 24px var(--c-shadow);
 }
 
 h3 {

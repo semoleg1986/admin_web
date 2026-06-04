@@ -142,9 +142,14 @@ const formatDate = (value: string) =>
   display: grid;
   gap: 1rem;
   border: 1px solid var(--c-border);
-  border-radius: 1.1rem;
-  background: color-mix(in oklab, var(--c-surface), black 2%);
+  border-radius: 12px;
+  background: var(--c-surface);
   padding: 1.1rem;
+  box-shadow: 0 10px 24px var(--c-shadow);
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    background-color 0.2s ease;
 }
 .payment-details__header {
   display: flex;
@@ -174,29 +179,42 @@ const formatDate = (value: string) =>
   margin: 0;
 }
 .payment-details__approve {
-  border: 1px solid color-mix(in oklab, var(--c-fg), transparent 72%);
-  border-radius: 0.85rem;
-  background: color-mix(in oklab, var(--c-fg), transparent 94%);
-  color: var(--c-fg);
-  padding: 0.8rem 1.1rem;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  background: var(--c-accent);
+  color: var(--c-surface);
+  padding: 0.7rem 1rem;
   font-weight: 700;
+  transition:
+    opacity 0.2s ease,
+    transform 0.2s ease;
 }
 .payment-details__reject {
-  border: 1px solid color-mix(in oklab, var(--c-danger), transparent 50%);
-  border-radius: 0.85rem;
+  border: 1px solid #ef4444;
+  border-radius: 10px;
   background: transparent;
   color: var(--c-danger);
-  padding: 0.8rem 1.1rem;
+  padding: 0.7rem 1rem;
   font-weight: 700;
+  transition:
+    background-color 0.2s ease,
+    transform 0.2s ease;
+}
+.payment-details__approve:active,
+.payment-details__reject:active {
+  transform: scale(0.97);
+}
+.payment-details__reject:hover {
+  background: color-mix(in srgb, var(--c-surface) 86%, #fee2e2 14%);
 }
 .payment-details__review-banner {
   display: grid;
   gap: 0.25rem;
   padding: 0.8rem 1rem;
   border: 1px solid color-mix(in oklab, #c47f1c, white 35%);
-  border-radius: 1rem;
-  background: color-mix(in oklab, #c47f1c, white 90%);
-  color: #8a5607;
+  border-radius: 12px;
+  background: #fef3c7;
+  color: #92400e;
 }
 .payment-details__reason {
   display: grid;
@@ -206,17 +224,25 @@ const formatDate = (value: string) =>
 }
 .payment-details__reason-select {
   border: 1px solid var(--c-border);
-  border-radius: 0.8rem;
+  border-radius: 10px;
   background: var(--c-surface);
   color: var(--c-fg);
-  padding: 0.85rem 0.9rem;
+  padding: 0.75rem 0.85rem;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+.payment-details__reason-select:focus {
+  border-color: var(--c-focus);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--c-focus) 22%, transparent);
+  outline: none;
 }
 .payment-details__grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 0;
   border: 1px solid color-mix(in oklab, var(--c-border), transparent 8%);
-  border-radius: 1rem;
+  border-radius: 12px;
   overflow: hidden;
 }
 .payment-details__grid > div {
@@ -238,9 +264,10 @@ const formatDate = (value: string) =>
   display: grid;
   gap: 0.2rem;
   padding: 1rem;
-  border: 1px solid color-mix(in oklab, var(--c-accent), white 58%);
-  border-radius: 1rem;
-  background: color-mix(in oklab, var(--c-accent), white 92%);
+  border: 1px solid #bbf7d0;
+  border-radius: 12px;
+  background: #dcfce7;
+  color: #166534;
 }
 .payment-details__error {
   color: var(--c-danger);

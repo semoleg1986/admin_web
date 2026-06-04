@@ -116,13 +116,17 @@ const statusClass = computed(() => {
 <style scoped>
 .settings-panel {
   border: 1px solid var(--c-border);
-  border-radius: 1rem;
-  background: color-mix(in oklab, var(--c-surface), white 8%);
+  border-radius: 12px;
+  background: var(--c-surface);
   padding: 0.95rem;
   display: flex;
   flex-direction: column;
   gap: 0.95rem;
-  box-shadow: 0 18px 44px rgba(17, 27, 33, 0.12);
+  box-shadow: 0 10px 24px var(--c-shadow);
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    background-color 0.2s ease;
 }
 
 .settings-panel__section {
@@ -172,11 +176,25 @@ const statusClass = computed(() => {
   min-height: 2.4rem;
   padding: 0.45rem 0.85rem;
   cursor: pointer;
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.settings-panel__chip:hover,
+.settings-panel__logout:hover {
+  background: var(--c-hover);
+}
+
+.settings-panel__chip:active,
+.settings-panel__logout:active {
+  transform: scale(0.97);
 }
 
 .settings-panel__chip--active {
-  border-color: color-mix(in oklab, var(--c-accent), white 58%);
-  background: color-mix(in oklab, var(--c-accent), white 90%);
+  border-color: var(--c-border);
+  background: var(--c-hover);
 }
 
 .settings-panel__status {
@@ -199,7 +217,7 @@ const statusClass = computed(() => {
 }
 
 .settings-panel__status-dot--ok {
-  background: #4ca971;
+  background: #16a34a;
 }
 
 .settings-panel__status-dot--danger {
@@ -207,7 +225,7 @@ const statusClass = computed(() => {
 }
 
 .settings-panel__status-dot--pending {
-  background: #d0a13d;
+  background: #f59e0b;
 }
 
 .settings-panel__logout {

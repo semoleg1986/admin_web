@@ -93,17 +93,27 @@ function shortId(value: string) {
   margin: 0;
 }
 .payments-table__refresh {
-  border: 1px solid color-mix(in oklab, var(--c-fg), transparent 72%);
-  border-radius: 0.85rem;
+  border: 1px solid var(--c-border);
+  border-radius: 10px;
   background: transparent;
   color: var(--c-fg);
-  padding: 0.7rem 1rem;
+  padding: 0.6rem 0.85rem;
   font-weight: 600;
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    transform 0.2s ease;
+}
+.payments-table__refresh:hover {
+  background: var(--c-hover);
+}
+.payments-table__refresh:active {
+  transform: scale(0.97);
 }
 .payments-table__frame {
   border: 1px solid var(--c-border);
-  border-radius: 1.1rem;
-  background: color-mix(in oklab, var(--c-surface), black 2%);
+  border-radius: 12px;
+  background: var(--c-surface);
   overflow: hidden;
 }
 .payments-table__head,
@@ -122,7 +132,7 @@ function shortId(value: string) {
 }
 .payments-table__head {
   padding: 0.95rem 1rem;
-  background: color-mix(in oklab, var(--c-surface), black 4%);
+  background: color-mix(in srgb, var(--c-surface) 84%, #f8fafc 16%);
   border-bottom: 1px solid var(--c-border);
   color: var(--c-muted);
   font-size: 0.84rem;
@@ -135,7 +145,7 @@ function shortId(value: string) {
   display: grid;
 }
 .payments-table__list li + li {
-  border-top: 1px solid color-mix(in oklab, var(--c-border), transparent 10%);
+  border-top: 1px solid var(--c-border);
 }
 .payments-table__row {
   width: 100%;
@@ -144,17 +154,20 @@ function shortId(value: string) {
   border: 0;
   background: transparent;
   color: var(--c-fg);
+  transition:
+    background-color 0.2s ease,
+    box-shadow 0.2s ease;
 }
 .payments-table__row:hover {
-  background: color-mix(in oklab, var(--c-accent), transparent 94%);
+  background: var(--c-hover);
 }
 .payments-table__row--active {
-  background: color-mix(in oklab, var(--c-accent), transparent 88%);
-  box-shadow: inset 3px 0 0 color-mix(in oklab, var(--c-accent), white 18%);
+  background: var(--c-hover);
+  box-shadow: inset 3px 0 0 var(--c-accent);
 }
 .payments-table__id,
 .payments-table__open {
-  color: color-mix(in oklab, var(--c-accent), black 6%);
+  color: var(--c-fg);
   font-weight: 700;
 }
 .payments-table__status {
@@ -168,21 +181,22 @@ function shortId(value: string) {
   font-weight: 600;
 }
 .payments-table__status--ready_for_approval {
-  border-color: color-mix(in oklab, var(--c-accent), white 45%);
-  background: color-mix(in oklab, var(--c-accent), white 88%);
+  border-color: #bbf7d0;
+  background: #dcfce7;
+  color: #166534;
 }
 .payments-table__status--stale_pending_intent,
 .payments-table__status--conflict_existing_access {
-  border-color: color-mix(in oklab, #c47f1c, white 40%);
-  background: color-mix(in oklab, #c47f1c, white 88%);
-  color: #8a5607;
+  border-color: #fcd34d;
+  background: #fef3c7;
+  color: #92400e;
 }
 .payments-table__status--approved,
 .payments-table__status--rejected,
 .payments-table__status--cancelled,
 .payments-table__status--expired {
   border-color: color-mix(in oklab, var(--c-border), black 8%);
-  background: color-mix(in oklab, var(--c-surface), black 6%);
+  background: color-mix(in srgb, var(--c-surface) 86%, #f8fafc 14%);
 }
 .payments-table__offer,
 .payments-table__pair {
