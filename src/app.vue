@@ -51,20 +51,31 @@
       </div>
 
       <nav class="admin-sidebar__nav" aria-label="Admin navigation">
-        <NuxtLink
-          v-for="item in navItems"
-          :key="item.to"
-          :to="item.to"
-          class="admin-nav-link"
-          :class="{ 'admin-nav-link--icon-only': sidebarCollapsed && !isMobile }"
-          :title="t(item.labelKey)"
-          @click="closeMobileSidebar"
+        <section
+          v-for="group in navGroups"
+          :key="group.labelKey"
+          class="admin-nav-group"
+          :class="{ 'admin-nav-group--icon-only': sidebarCollapsed && !isMobile }"
         >
-          <svg class="admin-nav-link__icon" viewBox="0 0 24 24" aria-hidden="true">
-            <path :d="item.icon" />
-          </svg>
-          <span v-if="!sidebarCollapsed || isMobile">{{ t(item.labelKey) }}</span>
-        </NuxtLink>
+          <p v-if="!sidebarCollapsed || isMobile" class="admin-nav-group__label">
+            {{ t(group.labelKey) }}
+          </p>
+
+          <NuxtLink
+            v-for="item in group.items"
+            :key="item.to"
+            :to="item.to"
+            class="admin-nav-link"
+            :class="{ 'admin-nav-link--icon-only': sidebarCollapsed && !isMobile }"
+            :title="t(item.labelKey)"
+            @click="closeMobileSidebar"
+          >
+            <svg class="admin-nav-link__icon" viewBox="0 0 24 24" aria-hidden="true">
+              <path :d="item.icon" />
+            </svg>
+            <span v-if="!sidebarCollapsed || isMobile">{{ t(item.labelKey) }}</span>
+          </NuxtLink>
+        </section>
       </nav>
 
       <div class="admin-sidebar__bottom">
@@ -152,7 +163,7 @@ const {
   healthPending,
   isMobile,
   mobileSidebarOpen,
-  navItems,
+  navGroups,
   runtimeConfig,
   settingsOpen,
   sidebarCollapsed,
@@ -243,7 +254,27 @@ const {
 .admin-sidebar__nav {
   display: flex;
   flex-direction: column;
+  gap: 0.95rem;
+}
+
+.admin-nav-group {
+  display: flex;
+  flex-direction: column;
   gap: 0.35rem;
+}
+
+.admin-nav-group--icon-only {
+  align-items: stretch;
+}
+
+.admin-nav-group__label {
+  margin: 0 0 0.1rem;
+  padding: 0 0.75rem;
+  color: color-mix(in oklab, var(--c-muted), transparent 12%);
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
 }
 
 .admin-sidebar__bottom {

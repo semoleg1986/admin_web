@@ -4,9 +4,27 @@
 
     <section class="admin-grid">
       <article class="admin-card admin-card--metric" style="grid-column: span 4">
-        <span class="admin-card__eyebrow">{{ t("dashboard.metric.pending") }}</span>
-        <strong>{{ courses.length }}</strong>
-        <p>{{ t("dashboard.queue.subtitle") }}</p>
+        <span class="admin-card__eyebrow">{{ t("dashboard.metric.courses") }}</span>
+        <strong>{{ courseSummary.total }}</strong>
+        <p>{{ t("dashboard.metric.coursesText") }}</p>
+      </article>
+
+      <article class="admin-card admin-card--metric" style="grid-column: span 4">
+        <span class="admin-card__eyebrow">{{ t("dashboard.metric.users") }}</span>
+        <strong>&mdash;</strong>
+        <p>{{ t("dashboard.metric.usersText") }}</p>
+      </article>
+
+      <article class="admin-card admin-card--metric" style="grid-column: span 4">
+        <span class="admin-card__eyebrow">{{ t("dashboard.metric.payments") }}</span>
+        <strong>&mdash;</strong>
+        <p>{{ t("dashboard.metric.paymentsText") }}</p>
+      </article>
+
+      <article class="admin-card admin-card--metric" style="grid-column: span 4">
+        <span class="admin-card__eyebrow">{{ t("dashboard.metric.activeCourses") }}</span>
+        <strong>{{ courseSummary.active }}</strong>
+        <p>{{ t("dashboard.metric.activeCoursesText") }}</p>
       </article>
 
       <article class="admin-card admin-card--metric" style="grid-column: span 4">
@@ -16,9 +34,9 @@
       </article>
 
       <article class="admin-card admin-card--metric" style="grid-column: span 4">
-        <span class="admin-card__eyebrow">{{ t("dashboard.metric.catalog") }}</span>
-        <strong>{{ courses.length }}</strong>
-        <p>{{ t("catalog.title") }}</p>
+        <span class="admin-card__eyebrow">{{ t("dashboard.metric.backend") }}</span>
+        <strong>{{ t(`status.${status}`) }}</strong>
+        <p>{{ t("dashboard.metric.backendText") }}</p>
       </article>
     </section>
 
@@ -26,8 +44,8 @@
       <article class="admin-section" style="grid-column: span 7">
         <div class="admin-page__header">
           <div>
-            <h2>{{ t("dashboard.queue") }}</h2>
-            <p>{{ t("dashboard.queue.subtitle") }}</p>
+            <h2>{{ t("dashboard.courses.title") }}</h2>
+            <p>{{ t("dashboard.courses.subtitle") }}</p>
           </div>
         </div>
         <CourseCatalogSection :courses="courses" />
@@ -40,6 +58,13 @@
           </div>
         </div>
         <ul class="admin-list">
+          <li>
+            <div>
+              <strong>{{ t("nav.dashboard") }}</strong>
+              <p>{{ t("dashboard.todo.summary") }}</p>
+            </div>
+            <span class="admin-badge admin-badge--accent">{{ t("dashboard.summaryApi") }}</span>
+          </li>
           <li>
             <div>
               <strong>{{ t("nav.payments") }}</strong>
@@ -84,7 +109,7 @@ useSeoMeta({
   ogDescription: "Панель администратора образовательной платформы."
 });
 
-const { courses } = useHomePage();
+const { courseSummary, courses, status } = useHomePage();
 </script>
 
 <style scoped>

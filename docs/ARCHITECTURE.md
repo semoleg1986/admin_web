@@ -41,6 +41,17 @@
 - `src/shared/api/*`: обертки над `useFetch`.
 - `tests/unit/*`: юнит-тесты по слоям shared/server.
 
+## Admin navigation
+
+- `Dashboard`: top-level operational overview.
+- `Operations`: payments/orders and user administration.
+- `Content`: course/catalog administration and Studio hand-off.
+- `System`: sidebar settings panel for theme/language/backend status/logout.
+
+Dashboard metrics should be backend-composed read models. Until
+`/api/admin/dashboard/summary` exists, the page may show only metrics backed by
+existing admin queries and explicit placeholders for missing summary data.
+
 ## Why this
 
 - предсказуемый рост проекта,

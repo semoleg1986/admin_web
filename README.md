@@ -37,7 +37,10 @@ Key variables:
 
 - left sidebar shell with collapse-to-icons behavior on desktop/tablet
 - mobile drawer navigation
+- grouped navigation: dashboard, operations, content, and sidebar settings
 - settings panel inside sidebar with theme, language, backend status, and logout
+- dashboard currently shows available catalog-derived course counts and reserves
+  users/payments/access metrics for backend summary endpoints
 
 ## Tests and quality
 

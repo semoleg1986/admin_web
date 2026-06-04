@@ -11,26 +11,41 @@ export function useAdminShell() {
   const isMobile = ref(false);
   const settingsOpen = ref(false);
   const sidebarStorageKey = "admin-sidebar-collapsed";
-  const navItems = [
+  const navGroups = [
     {
-      to: "/",
-      labelKey: "nav.dashboard",
-      icon: "M4 11.5L12 4l8 7.5V20a1 1 0 0 1-1 1h-4.5v-5h-5v5H5a1 1 0 0 1-1-1z"
+      labelKey: "nav.group.overview",
+      items: [
+        {
+          to: "/",
+          labelKey: "nav.dashboard",
+          icon: "M4 11.5L12 4l8 7.5V20a1 1 0 0 1-1 1h-4.5v-5h-5v5H5a1 1 0 0 1-1-1z"
+        }
+      ]
     },
     {
-      to: "/payments",
-      labelKey: "nav.payments",
-      icon: "M3 7.5A2.5 2.5 0 0 1 5.5 5h13A2.5 2.5 0 0 1 21 7.5v9a2.5 2.5 0 0 1-2.5 2.5h-13A2.5 2.5 0 0 1 3 16.5zm3.5.5h11m-11 4h3m5 0h3"
+      labelKey: "nav.group.operations",
+      items: [
+        {
+          to: "/payments",
+          labelKey: "nav.payments",
+          icon: "M3 7.5A2.5 2.5 0 0 1 5.5 5h13A2.5 2.5 0 0 1 21 7.5v9a2.5 2.5 0 0 1-2.5 2.5h-13A2.5 2.5 0 0 1 3 16.5zm3.5.5h11m-11 4h3m5 0h3"
+        },
+        {
+          to: "/users",
+          labelKey: "nav.users",
+          icon: "M12 12a4 4 0 1 0-4-4 4 4 0 0 0 4 4m-7 8a7 7 0 0 1 14 0m3-10a3 3 0 1 1-3-3m-15 3a3 3 0 1 1 3-3"
+        }
+      ]
     },
     {
-      to: "/users",
-      labelKey: "nav.users",
-      icon: "M12 12a4 4 0 1 0-4-4 4 4 0 0 0 4 4m-7 8a7 7 0 0 1 14 0m3-10a3 3 0 1 1-3-3m-15 3a3 3 0 1 1 3-3"
-    },
-    {
-      to: "/catalog",
-      labelKey: "nav.catalog",
-      icon: "M5 4.5h14A1.5 1.5 0 0 1 20.5 6v12A1.5 1.5 0 0 1 19 19.5H8A3.5 3.5 0 0 0 4.5 23V6A1.5 1.5 0 0 1 6 4.5zm0 0V19"
+      labelKey: "nav.group.content",
+      items: [
+        {
+          to: "/catalog",
+          labelKey: "nav.catalog",
+          icon: "M5 4.5h14A1.5 1.5 0 0 1 20.5 6v12A1.5 1.5 0 0 1 19 19.5H8A3.5 3.5 0 0 0 4.5 23V6A1.5 1.5 0 0 1 6 4.5zm0 0V19"
+        }
+      ]
     }
   ] as const;
 
@@ -149,7 +164,7 @@ export function useAdminShell() {
     healthPending,
     isMobile,
     mobileSidebarOpen,
-    navItems,
+    navGroups,
     runtimeConfig,
     settingsOpen,
     sidebarCollapsed,
