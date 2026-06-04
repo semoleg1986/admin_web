@@ -1,4 +1,4 @@
-export type AuthRole = "admin" | "teacher" | "parent" | "student";
+export type AuthRole = "admin" | "content_manager" | "teacher" | "parent" | "student";
 export type AuthStatus = "active" | "blocked" | "archived";
 
 export interface AuthLoginPayload {

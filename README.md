@@ -8,7 +8,7 @@ Admin operations console built on Nuxt 3.
 
 - admin-facing operational UI
 - payment intent review and approval UX
-- user and catalog administration surfaces
+- user, staff invite and catalog administration surfaces
 - server-side backend proxies under `/api`
 
 ## Local run
@@ -30,8 +30,10 @@ App URL:
 Key variables:
 
 - `NUXT_AUTH_SERVICE_BASE_URL`
+- `NUXT_USERS_SERVICE_BASE_URL`
 - `NUXT_PUBLIC_API_BASE_URL`
 - `NUXT_PUBLIC_SITE_URL`
+- `NUXT_PUBLIC_STUDIO_SITE_URL`
 
 ## UI notes
 
@@ -41,6 +43,8 @@ Key variables:
 - settings panel inside sidebar with theme, language, backend status, and logout
 - dashboard currently shows available catalog-derived course counts and reserves
   users/payments/access metrics for backend summary endpoints
+- users page can create one-time Studio onboarding links for existing active
+  teacher/content manager profiles through `users_service`
 
 ## Tests and quality
 

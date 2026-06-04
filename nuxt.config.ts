@@ -12,10 +12,12 @@ export default defineNuxtConfig({
   runtimeConfig: {
     authServiceBaseUrl: "http://localhost:8000",
     paymentsServiceBaseUrl: "http://localhost:8004",
+    usersServiceBaseUrl: "http://localhost:8002",
     public: {
       apiBaseUrl: "/api",
       appName: "Curs Admin",
-      siteUrl: "http://localhost:3001"
+      siteUrl: "http://localhost:3001",
+      studioSiteUrl: "http://localhost:3002"
     }
   }
 });

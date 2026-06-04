@@ -20,7 +20,7 @@ interface AuthMeResponse {
   account_id: string;
   user_id: string;
   email: string;
-  roles: Array<"admin" | "teacher" | "parent" | "student">;
+  roles: Array<"admin" | "content_manager" | "teacher" | "parent" | "student">;
   status: "active" | "blocked" | "archived";
 }
 
